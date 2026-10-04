@@ -10,6 +10,10 @@ use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\ChildController;
 use App\Http\Controllers\Admin\GuardianController;
 use App\Http\Controllers\Admin\ChildGuardianController;
+use App\Http\Controllers\Admin\EmergencyContactController;
+use App\Http\Controllers\Admin\DocumentController;
+use App\Http\Controllers\Admin\ReferralController;
+use App\Http\Controllers\Admin\AssessmentController;
 use Illuminate\Support\Facades\Route;
 
 // Redirect the root: guests → login, signed-in users → dashboard
@@ -156,9 +160,7 @@ Route::middleware('auth')->group(function () {
             ->middleware('permission:children.delete');
 
         /* ---------------------------------------------------------------
-         |  Child ↔ Guardian (attach / update / detach)
-         |  Registered before the guardians resource so `children/{child}/
-         |  guardians/...` doesn't collide with `children/{child}`.
+         |  Child ↔ Guardian
          * --------------------------------------------------------------- */
         Route::prefix('children/{child}/guardians')->name('children.guardians.')->group(function () {
             Route::post('/', [ChildGuardianController::class, 'store'])
@@ -173,6 +175,66 @@ Route::middleware('auth')->group(function () {
                 ->name('destroy')
                 ->middleware('permission:children.edit');
         });
+
+        /* ---------------------------------------------------------------
+         |  Child ↔ Emergency Contact
+         * --------------------------------------------------------------- */
+        Route::prefix('children/{child}/emergency-contacts')->name('children.emergency-contacts.')->group(function () {
+            Route::post('/', [EmergencyContactController::class, 'store'])
+                ->name('store')
+                ->middleware('permission:children.edit');
+
+            Route::put('{contact}', [EmergencyContactController::class, 'update'])
+                ->name('update')
+                ->middleware('permission:children.edit');
+
+            Route::delete('{contact}', [EmergencyContactController::class, 'destroy'])
+                ->name('destroy')
+                ->middleware('permission:children.edit');
+        });
+
+        /* ---------------------------------------------------------------
+         |  Child ↔ Referral
+         * --------------------------------------------------------------- */
+        Route::prefix('children/{child}/referrals')->name('children.referrals.')->group(function () {
+            Route::post('/', [ReferralController::class, 'store'])
+                ->name('store')
+                ->middleware('permission:children.edit');
+
+            Route::put('{referral}', [ReferralController::class, 'update'])
+                ->name('update')
+                ->middleware('permission:children.edit');
+
+            Route::delete('{referral}', [ReferralController::class, 'destroy'])
+                ->name('destroy')
+                ->middleware('permission:children.edit');
+        });
+
+        /* ---------------------------------------------------------------
+         |  Child ↔ Document
+         * --------------------------------------------------------------- */
+        Route::prefix('children/{child}/documents')->name('children.documents.')->group(function () {
+            Route::post('/', [DocumentController::class, 'store'])
+                ->name('store')
+                ->middleware('permission:children.edit');
+        });
+
+        Route::prefix('documents')->name('documents.')->group(function () {
+            Route::get('{document}/download', [DocumentController::class, 'download'])
+                ->name('download')
+                ->middleware('permission:children.view');
+
+            Route::delete('{document}', [DocumentController::class, 'destroy'])
+                ->name('destroy')
+                ->middleware('permission:children.edit');
+        });
+
+        /* ---------------------------------------------------------------
+         |  Referrals (standalone list)
+         * --------------------------------------------------------------- */
+        Route::get('referrals', [ReferralController::class, 'index'])
+            ->name('referrals.index')
+            ->middleware('permission:referrals.view');
 
         /* ---------------------------------------------------------------
          |  Guardians (standalone CRUD)
@@ -195,6 +257,32 @@ Route::middleware('auth')->group(function () {
         Route::post('guardians/{id}/restore', [GuardianController::class, 'restore'])
             ->name('guardians.restore')
             ->middleware('permission:guardians.delete');
+
+        /* ---------------------------------------------------------------
+         |  Assessments
+         * --------------------------------------------------------------- */
+        Route::resource('assessments', AssessmentController::class)
+            ->except(['destroy'])
+            ->middleware([
+                'index'   => 'permission:assessments.view',
+                'show'    => 'permission:assessments.view',
+                'create'  => 'permission:assessments.create',
+                'store'   => 'permission:assessments.create',
+                'edit'    => 'permission:assessments.edit',
+                'update'  => 'permission:assessments.edit',
+            ]);
+
+        Route::post('assessments/{assessment}/finalize', [AssessmentController::class, 'finalize'])
+            ->name('assessments.finalize')
+            ->middleware('permission:assessments.approve');
+
+        Route::delete('assessments/{assessment}', [AssessmentController::class, 'destroy'])
+            ->name('assessments.destroy')
+            ->middleware('permission:assessments.delete');
+
+        Route::post('assessments/{id}/restore', [AssessmentController::class, 'restore'])
+            ->name('assessments.restore')
+            ->middleware('permission:assessments.delete');
     });
 });
 

@@ -42,6 +42,40 @@ class Child extends Model implements Auditable
         ];
     }
 
+    // ─── Relationships ─────────────────────────────────
+
+    public function guardians()
+    {
+        return $this->belongsToMany(Guardian::class, 'child_guardian')
+            ->withPivot([
+                'relationship', 'relationship_other',
+                'is_primary', 'is_legal',
+                'consent_medical', 'consent_education', 'consent_photography',
+                'lives_with_child', 'notes',
+            ])
+            ->withTimestamps();
+    }
+
+    public function primaryGuardian()
+    {
+        return $this->guardians()->wherePivot('is_primary', true)->first();
+    }
+
+    public function emergencyContacts()
+    {
+        return $this->hasMany(EmergencyContact::class)->orderBy('priority');
+    }
+
+    public function referrals()
+    {
+        return $this->hasMany(Referral::class)->latest('referral_date');
+    }
+
+    public function documents()
+    {
+        return $this->morphMany(Document::class, 'documentable')->latest();
+    }
+
     // ─── Accessors ─────────────────────────────────────
 
     public function getFullNameAttribute(): string
@@ -78,6 +112,7 @@ class Child extends Model implements Auditable
         // Under 2 years old, show months — clinically meaningful for therapy
         if ($age < 1) {
             $months = (int) $this->date_of_birth->diffInMonths(now());
+
             return $months . ' ' . ($months === 1 ? 'month' : 'months');
         }
 
@@ -143,22 +178,7 @@ class Child extends Model implements Auditable
     {
         return $query->where('primary_condition', $condition);
     }
-public function guardians()
-{
-    return $this->belongsToMany(Guardian::class, 'child_guardian')
-        ->withPivot([
-            'relationship', 'relationship_other',
-            'is_primary', 'is_legal',
-            'consent_medical', 'consent_education', 'consent_photography',
-            'lives_with_child', 'notes',
-        ])
-        ->withTimestamps();
-}
 
-public function primaryGuardian()
-{
-    return $this->guardians()->wherePivot('is_primary', true)->first();
-}
     /**
      * Search by name, child number, or phone.
      */

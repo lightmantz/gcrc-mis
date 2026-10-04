@@ -74,13 +74,13 @@ return [
         ],
 
         // ─── 4.2 CHILD REGISTRATION ────────────────────────
-        [
+         [
             'label' => 'CHILDREN',
             'items' => [
                 ['key' => 'children',        'text' => 'All Children',   'icon' => 'users',    'route' => 'admin.children.index'],
                 ['key' => 'children.create', 'text' => 'Register Child', 'icon' => 'user-plus','route' => 'admin.children.create'],
                 ['key' => 'guardians',       'text' => 'Guardians',      'icon' => 'heart',    'route' => 'admin.guardians.index'],
-                // ['key' => 'referrals',    'text' => 'Referrals',      'icon' => 'share',    'route' => 'admin.referrals.index'],
+                ['key' => 'referrals',    'text' => 'Referrals',      'icon' => 'share',    'route' => 'admin.referrals.index'],
             ],
         ],
 
@@ -88,8 +88,8 @@ return [
         [
             'label' => 'CLINICAL',
             'items' => [
+                ['key' => 'assessments',     'text' => 'Assessments',     'icon' => 'clipboard', 'route' => 'admin.assessments.index'],
                 // Unlock each item as its module is built.
-                // ['key' => 'assessments',     'text' => 'Assessments',     'icon' => 'clipboard', 'route' => 'admin.assessments.index'],
                 // ['key' => 'diagnoses',       'text' => 'Diagnoses',       'icon' => 'medical',   'route' => 'admin.diagnoses.index'],
                 // ['key' => 'treatment-plans', 'text' => 'Treatment Plans', 'icon' => 'heart',     'route' => 'admin.treatment-plans.index'],
                 // ['key' => 'therapy-records', 'text' => 'Therapy Records', 'icon' => 'activity',  'route' => 'admin.therapy-records.index'],

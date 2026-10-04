@@ -5,13 +5,19 @@ namespace App\Providers;
 use App\Listeners\RecordFailedLogin;
 use App\Listeners\RecordLogin;
 use App\Listeners\RecordLogout;
+use App\Models\Assessment;
 use App\Models\Child;
+use App\Models\Document;
+use App\Models\EmergencyContact;
 use App\Models\Guardian;
 use App\Models\Staff;
 use App\Models\User;
 use App\Observers\ChildObserver;
 use App\Observers\StaffObserver;
+use App\Policies\AssessmentPolicy;
 use App\Policies\ChildPolicy;
+use App\Policies\DocumentPolicy;
+use App\Policies\EmergencyContactPolicy;
 use App\Policies\GuardianPolicy;
 use App\Policies\RolePolicy;
 use App\Policies\StaffPolicy;
@@ -39,6 +45,9 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Staff::class, StaffPolicy::class);
         Gate::policy(Child::class, ChildPolicy::class);
         Gate::policy(Guardian::class, GuardianPolicy::class);
+        Gate::policy(EmergencyContact::class, EmergencyContactPolicy::class);
+        Gate::policy(Document::class, DocumentPolicy::class);
+        Gate::policy(Assessment::class, AssessmentPolicy::class);
 
         // Observers
         Staff::observe(StaffObserver::class);
