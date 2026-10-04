@@ -1,5 +1,7 @@
 @php
-    $editing = isset($user);
+    $user = $user ?? new \App\Models\User();
+    $editing = $user->exists;
+    $selectedRoles = old('roles', $editing ? $user->roles->pluck('name')->toArray() : []);
 @endphp
 
 <div class="form-row">
@@ -62,7 +64,7 @@
         @foreach ($roles as $role)
             <label class="form-check">
                 <input type="checkbox" name="roles[]" value="{{ $role }}"
-                       @checked(collect(old('roles', $user->roles->pluck('name')->toArray() ?? []))->contains($role))>
+                       @checked(in_array($role, $selectedRoles))>
                 <span>{{ $role }}</span>
             </label>
         @endforeach

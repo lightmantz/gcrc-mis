@@ -2,7 +2,13 @@
 
 namespace App\Assessments;
 
+use App\Assessments\Types\FunctionalAssessment;
 use App\Assessments\Types\MedicalAssessment;
+use App\Assessments\Types\OccupationalTherapyAssessment;
+use App\Assessments\Types\PhysiotherapyAssessment;
+use App\Assessments\Types\PsychologicalAssessment;
+use App\Assessments\Types\SocialAssessment;
+use App\Assessments\Types\SpeechAssessment;
 
 class AssessmentTypeRegistry
 {
@@ -14,8 +20,12 @@ class AssessmentTypeRegistry
      */
     private const TYPES = [
         MedicalAssessment::class,
-        // PhysiotherapyAssessment::class,  // Module 8b
-        // SpeechAssessment::class,         // Module 8b
+        PhysiotherapyAssessment::class,
+        OccupationalTherapyAssessment::class,
+        SpeechAssessment::class,
+        PsychologicalAssessment::class,
+        SocialAssessment::class,
+        FunctionalAssessment::class,
     ];
 
     /**

@@ -5,10 +5,16 @@
         ->limit(10)
         ->get();
     $totalAssessments = $child->assessments()->count();
+
+    // Count per type, for the summary chips
+    $byType = $child->assessments()
+        ->selectRaw('type, count(*) as total')
+        ->groupBy('type')
+        ->pluck('total', 'type');
 @endphp
 
 <x-gentelella::card title="Assessments" style="margin-top: 16px;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 12px; flex-wrap: wrap;">
         <span style="color: var(--text-muted); font-size: 12px;">
             {{ $totalAssessments }} {{ Str::plural('assessment', $totalAssessments) }} recorded
         </span>
@@ -20,6 +26,23 @@
             </a>
         @endcan
     </div>
+
+    @if ($byType->isNotEmpty())
+        <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color-light);">
+            @foreach ($byType as $typeKey => $count)
+                @php
+                    $typeInstance = \App\Assessments\AssessmentTypeRegistry::get($typeKey);
+                    $label = $typeInstance?->label() ?? ucfirst($typeKey);
+                @endphp
+                <a href="{{ route('admin.assessments.index', ['child' => $child->id, 'type' => $typeKey]) }}"
+                   style="text-decoration: none;">
+                    <x-gentelella::badge tone="teal">
+                        {{ $label }} · {{ $count }}
+                    </x-gentelella::badge>
+                </a>
+            @endforeach
+        </div>
+    @endif
 
     @if ($assessments->isEmpty())
         <p style="color: var(--text-muted); font-size: 13px;">No assessments recorded yet.</p>

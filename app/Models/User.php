@@ -33,7 +33,21 @@ class User extends Authenticatable implements Auditable
         ];
     }
 
-    // Scopes
+    // ─── Relationships ─────────────────────────────────
+
+    /**
+     * The staff record(s) this user is linked to.
+     * A user may hold multiple staff records (many-to-many via staff_user).
+     * Used by the AssessmentPolicy to check the user's clinical category.
+     */
+    public function staff()
+    {
+        return $this->belongsToMany(Staff::class, 'staff_user')
+            ->withTimestamps();
+    }
+
+    // ─── Scopes ────────────────────────────────────────
+
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
@@ -43,6 +57,8 @@ class User extends Authenticatable implements Auditable
     {
         return $this->is_active === true;
     }
+
+    // ─── Account lifecycle ─────────────────────────────
 
     public function deactivate(User $by, string $reason): void
     {
