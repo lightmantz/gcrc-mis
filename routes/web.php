@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\AuditController;
 use App\Http\Controllers\Admin\LoginHistoryController;
 use App\Http\Controllers\Admin\StaffController;
+use App\Http\Controllers\Admin\ChildController;
 use Illuminate\Support\Facades\Route;
 
 // Redirect the root: guests → login, signed-in users → dashboard
@@ -142,6 +143,24 @@ Route::middleware('auth')->group(function () {
         Route::post('staff/{staff}/suspend', [StaffController::class, 'suspend'])
             ->name('staff.suspend')
             ->middleware('permission:staff.edit');
+
+        /* ---------------------------------------------------------------
+         |  Children
+         * --------------------------------------------------------------- */
+        Route::resource('children', ChildController::class)
+            ->middleware([
+                'index'   => 'permission:children.view',
+                'show'    => 'permission:children.view',
+                'create'  => 'permission:children.create',
+                'store'   => 'permission:children.create',
+                'edit'    => 'permission:children.edit',
+                'update'  => 'permission:children.edit',
+                'destroy' => 'permission:children.delete',
+            ]);
+
+        Route::post('children/{id}/restore', [ChildController::class, 'restore'])
+            ->name('children.restore')
+            ->middleware('permission:children.delete');
     });
 });
 

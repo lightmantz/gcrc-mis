@@ -5,9 +5,12 @@ namespace App\Providers;
 use App\Listeners\RecordFailedLogin;
 use App\Listeners\RecordLogin;
 use App\Listeners\RecordLogout;
+use App\Models\Child;
 use App\Models\Staff;
 use App\Models\User;
+use App\Observers\ChildObserver;
 use App\Observers\StaffObserver;
+use App\Policies\ChildPolicy;
 use App\Policies\RolePolicy;
 use App\Policies\StaffPolicy;
 use App\Policies\UserPolicy;
@@ -32,9 +35,11 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Role::class, RolePolicy::class);
         Gate::policy(Staff::class, StaffPolicy::class);
+        Gate::policy(Child::class, ChildPolicy::class);
 
         // Observers
         Staff::observe(StaffObserver::class);
+        Child::observe(ChildObserver::class);
 
         // Event listeners
         Event::listen(Login::class, RecordLogin::class);
