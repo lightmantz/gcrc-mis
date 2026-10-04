@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\AuditController;
 use App\Http\Controllers\Admin\LoginHistoryController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\ChildController;
+use App\Http\Controllers\Admin\GuardianController;
+use App\Http\Controllers\Admin\ChildGuardianController;
 use Illuminate\Support\Facades\Route;
 
 // Redirect the root: guests → login, signed-in users → dashboard
@@ -58,8 +60,6 @@ Route::middleware('auth')->group(function () {
 
         /* ---------------------------------------------------------------
          |  Roles & Permissions
-         |  destroy is registered separately so we can apply its own
-         |  middleware without Laravel's resource defaults interfering.
          * --------------------------------------------------------------- */
         Route::resource('roles', RoleController::class)
             ->except(['destroy'])
@@ -78,8 +78,6 @@ Route::middleware('auth')->group(function () {
 
         /* ---------------------------------------------------------------
          |  Audit Trail
-         |  `export` MUST be declared before `{audit}` or Laravel will try
-         |  to resolve "export" as an audit ID and fail with 404.
          * --------------------------------------------------------------- */
         Route::prefix('audit')->name('audit.')->group(function () {
             Route::get('/', [AuditController::class, 'index'])
@@ -97,8 +95,6 @@ Route::middleware('auth')->group(function () {
 
         /* ---------------------------------------------------------------
          |  Login History
-         |  `purge` MUST be declared before `{loginHistory}` or Laravel
-         |  will try to resolve "purge" as a login-history ID.
          * --------------------------------------------------------------- */
         Route::prefix('login-history')->name('login-history.')->group(function () {
             Route::get('/', [LoginHistoryController::class, 'index'])
@@ -116,9 +112,6 @@ Route::middleware('auth')->group(function () {
 
         /* ---------------------------------------------------------------
          |  Staff
-         |  `parameters(['staff' => 'staff'])` prevents Laravel from
-         |  generating `{staffs}` as the resource parameter name, which
-         |  would break route-model binding on show/edit/update/destroy.
          * --------------------------------------------------------------- */
         Route::resource('staff', StaffController::class)
             ->parameters(['staff' => 'staff'])
@@ -161,6 +154,47 @@ Route::middleware('auth')->group(function () {
         Route::post('children/{id}/restore', [ChildController::class, 'restore'])
             ->name('children.restore')
             ->middleware('permission:children.delete');
+
+        /* ---------------------------------------------------------------
+         |  Child ↔ Guardian (attach / update / detach)
+         |  Registered before the guardians resource so `children/{child}/
+         |  guardians/...` doesn't collide with `children/{child}`.
+         * --------------------------------------------------------------- */
+        Route::prefix('children/{child}/guardians')->name('children.guardians.')->group(function () {
+            Route::post('/', [ChildGuardianController::class, 'store'])
+                ->name('store')
+                ->middleware('permission:children.edit');
+
+            Route::put('{guardian}', [ChildGuardianController::class, 'update'])
+                ->name('update')
+                ->middleware('permission:children.edit');
+
+            Route::delete('{guardian}', [ChildGuardianController::class, 'destroy'])
+                ->name('destroy')
+                ->middleware('permission:children.edit');
+        });
+
+        /* ---------------------------------------------------------------
+         |  Guardians (standalone CRUD)
+         * --------------------------------------------------------------- */
+        Route::resource('guardians', GuardianController::class)
+            ->except(['destroy'])
+            ->middleware([
+                'index'   => 'permission:guardians.view',
+                'show'    => 'permission:guardians.view',
+                'create'  => 'permission:guardians.create',
+                'store'   => 'permission:guardians.create',
+                'edit'    => 'permission:guardians.edit',
+                'update'  => 'permission:guardians.edit',
+            ]);
+
+        Route::delete('guardians/{guardian}', [GuardianController::class, 'destroy'])
+            ->name('guardians.destroy')
+            ->middleware('permission:guardians.delete');
+
+        Route::post('guardians/{id}/restore', [GuardianController::class, 'restore'])
+            ->name('guardians.restore')
+            ->middleware('permission:guardians.delete');
     });
 });
 

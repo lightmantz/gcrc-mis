@@ -143,7 +143,22 @@ class Child extends Model implements Auditable
     {
         return $query->where('primary_condition', $condition);
     }
+public function guardians()
+{
+    return $this->belongsToMany(Guardian::class, 'child_guardian')
+        ->withPivot([
+            'relationship', 'relationship_other',
+            'is_primary', 'is_legal',
+            'consent_medical', 'consent_education', 'consent_photography',
+            'lives_with_child', 'notes',
+        ])
+        ->withTimestamps();
+}
 
+public function primaryGuardian()
+{
+    return $this->guardians()->wherePivot('is_primary', true)->first();
+}
     /**
      * Search by name, child number, or phone.
      */

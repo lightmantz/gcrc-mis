@@ -79,6 +79,7 @@ return [
             'items' => [
                 ['key' => 'children',        'text' => 'All Children',   'icon' => 'users',    'route' => 'admin.children.index'],
                 ['key' => 'children.create', 'text' => 'Register Child', 'icon' => 'user-plus','route' => 'admin.children.create'],
+                ['key' => 'guardians',       'text' => 'Guardians',      'icon' => 'heart',    'route' => 'admin.guardians.index'],
                 // ['key' => 'referrals',    'text' => 'Referrals',      'icon' => 'share',    'route' => 'admin.referrals.index'],
             ],
         ],

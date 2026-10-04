@@ -101,6 +101,8 @@
                     </dd>
                 </dl>
             </x-gentelella::card>
+
+            @include('admin.children.partials._guardians', ['child' => $child])
         </div>
 
         <div>

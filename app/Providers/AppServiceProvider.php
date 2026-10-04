@@ -6,11 +6,13 @@ use App\Listeners\RecordFailedLogin;
 use App\Listeners\RecordLogin;
 use App\Listeners\RecordLogout;
 use App\Models\Child;
+use App\Models\Guardian;
 use App\Models\Staff;
 use App\Models\User;
 use App\Observers\ChildObserver;
 use App\Observers\StaffObserver;
 use App\Policies\ChildPolicy;
+use App\Policies\GuardianPolicy;
 use App\Policies\RolePolicy;
 use App\Policies\StaffPolicy;
 use App\Policies\UserPolicy;
@@ -36,6 +38,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Role::class, RolePolicy::class);
         Gate::policy(Staff::class, StaffPolicy::class);
         Gate::policy(Child::class, ChildPolicy::class);
+        Gate::policy(Guardian::class, GuardianPolicy::class);
 
         // Observers
         Staff::observe(StaffObserver::class);
