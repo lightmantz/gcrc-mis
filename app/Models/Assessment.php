@@ -52,6 +52,11 @@ class Assessment extends Model implements Auditable
         return $this->morphMany(Document::class, 'documentable')->latest();
     }
 
+    public function diagnoses()
+    {
+        return $this->hasMany(Diagnosis::class);
+    }
+
     // ─── Type delegation ───────────────────────────────
 
     /**

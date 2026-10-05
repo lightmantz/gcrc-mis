@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\EmergencyContactController;
 use App\Http\Controllers\Admin\DocumentController;
 use App\Http\Controllers\Admin\ReferralController;
 use App\Http\Controllers\Admin\AssessmentController;
+use App\Http\Controllers\Admin\DiagnosisController;
 use Illuminate\Support\Facades\Route;
 
 // Redirect the root: guests → login, signed-in users → dashboard
@@ -283,6 +284,32 @@ Route::middleware('auth')->group(function () {
         Route::post('assessments/{id}/restore', [AssessmentController::class, 'restore'])
             ->name('assessments.restore')
             ->middleware('permission:assessments.delete');
+
+        /* ---------------------------------------------------------------
+         |  Diagnoses & Conditions
+         * --------------------------------------------------------------- */
+        Route::resource('diagnoses', DiagnosisController::class)
+            ->except(['destroy'])
+            ->middleware([
+                'index'   => 'permission:diagnoses.view',
+                'show'    => 'permission:diagnoses.view',
+                'create'  => 'permission:diagnoses.create',
+                'store'   => 'permission:diagnoses.create',
+                'edit'    => 'permission:diagnoses.edit',
+                'update'  => 'permission:diagnoses.edit',
+            ]);
+
+        Route::post('diagnoses/{diagnosis}/close', [DiagnosisController::class, 'close'])
+            ->name('diagnoses.close')
+            ->middleware('permission:diagnoses.approve');
+
+        Route::delete('diagnoses/{diagnosis}', [DiagnosisController::class, 'destroy'])
+            ->name('diagnoses.destroy')
+            ->middleware('permission:diagnoses.delete');
+
+        Route::post('diagnoses/{id}/restore', [DiagnosisController::class, 'restore'])
+            ->name('diagnoses.restore')
+            ->middleware('permission:diagnoses.delete');
     });
 });
 

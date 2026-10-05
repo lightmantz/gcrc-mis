@@ -76,6 +76,28 @@ class Child extends Model implements Auditable
         return $this->morphMany(Document::class, 'documentable')->latest();
     }
 
+    public function assessments()
+    {
+        return $this->hasMany(Assessment::class)->latest('assessment_date');
+    }
+
+    public function diagnoses()
+    {
+        return $this->hasMany(Diagnosis::class)->latest('diagnosed_at');
+    }
+
+    public function activeDiagnoses()
+    {
+        return $this->diagnoses()->where('status', 'active');
+    }
+
+    public function primaryDiagnoses()
+    {
+        return $this->diagnoses()
+            ->where('diagnosis_type', 'primary')
+            ->where('status', 'active');
+    }
+
     // ─── Accessors ─────────────────────────────────────
 
     public function getFullNameAttribute(): string

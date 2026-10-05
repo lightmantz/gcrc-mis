@@ -44,13 +44,13 @@ class Permissions
     public const EXTRA_ACTIONS = [
         'children'        => ['export', 'view_medical'],
         'assessments'     => ['approve'],
+        'diagnoses'       => ['approve'],           // ← added
         'treatment_plans' => ['approve'],
         'admissions'      => ['discharge', 'transfer'],
         'pharmacy'        => ['dispense'],
         'equipment'       => ['assign', 'return'],
         'users'           => ['activate', 'deactivate'],
-
-        // Reports — each named report is its own permission.
+        'staff'           => ['view_sensitive'],    // ← also present
         'reports'         => ['export', 'clinical', 'education', 'operational'],
     ];
 
