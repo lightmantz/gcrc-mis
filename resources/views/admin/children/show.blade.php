@@ -102,6 +102,10 @@
                 </dl>
             </x-gentelella::card>
 
+            @include('admin.children.partials._diagnoses', ['child' => $child])
+
+            @include('admin.children.partials._treatment-plans', ['child' => $child])
+
             @include('admin.children.partials._guardians', ['child' => $child])
         </div>
 

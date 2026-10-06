@@ -15,6 +15,8 @@ use App\Http\Controllers\Admin\DocumentController;
 use App\Http\Controllers\Admin\ReferralController;
 use App\Http\Controllers\Admin\AssessmentController;
 use App\Http\Controllers\Admin\DiagnosisController;
+use App\Http\Controllers\Admin\TreatmentPlanController;
+use App\Http\Controllers\Admin\TreatmentGoalController;
 use Illuminate\Support\Facades\Route;
 
 // Redirect the root: guests → login, signed-in users → dashboard
@@ -310,6 +312,55 @@ Route::middleware('auth')->group(function () {
         Route::post('diagnoses/{id}/restore', [DiagnosisController::class, 'restore'])
             ->name('diagnoses.restore')
             ->middleware('permission:diagnoses.delete');
+
+        /* ---------------------------------------------------------------
+         |  Treatment Plans
+         |  `parameters(['treatment-plans' => 'treatmentPlan'])` forces the
+         |  route parameter name to {treatmentPlan}, matching the controller
+         |  method signatures.
+         * --------------------------------------------------------------- */
+        Route::resource('treatment-plans', TreatmentPlanController::class)
+            ->parameters(['treatment-plans' => 'treatmentPlan'])
+            ->except(['destroy'])
+            ->middleware([
+                'index'   => 'permission:treatment_plans.view',
+                'show'    => 'permission:treatment_plans.view',
+                'create'  => 'permission:treatment_plans.create',
+                'store'   => 'permission:treatment_plans.create',
+                'edit'    => 'permission:treatment_plans.edit',
+                'update'  => 'permission:treatment_plans.edit',
+            ]);
+
+        Route::post('treatment-plans/{treatmentPlan}/activate', [TreatmentPlanController::class, 'activate'])
+            ->name('treatment-plans.activate')
+            ->middleware('permission:treatment_plans.approve');
+
+        Route::post('treatment-plans/{treatmentPlan}/close', [TreatmentPlanController::class, 'close'])
+            ->name('treatment-plans.close')
+            ->middleware('permission:treatment_plans.approve');
+
+        Route::delete('treatment-plans/{treatmentPlan}', [TreatmentPlanController::class, 'destroy'])
+            ->name('treatment-plans.destroy')
+            ->middleware('permission:treatment_plans.delete');
+
+        Route::post('treatment-plans/{id}/restore', [TreatmentPlanController::class, 'restore'])
+            ->name('treatment-plans.restore')
+            ->middleware('permission:treatment_plans.delete');
+
+        /* ---------------------------------------------------------------
+         |  Treatment Goals (scoped to a plan)
+         * --------------------------------------------------------------- */
+        Route::prefix('treatment-plans/{treatmentPlan}/goals')
+            ->name('treatment-plans.goals.')
+            ->middleware('permission:treatment_plans.edit')
+            ->group(function () {
+                Route::post('/', [TreatmentGoalController::class, 'store'])->name('store');
+                Route::put('{goal}', [TreatmentGoalController::class, 'update'])->name('update');
+                Route::delete('{goal}', [TreatmentGoalController::class, 'destroy'])->name('destroy');
+
+                Route::post('{goal}/progress', [TreatmentGoalController::class, 'recordProgress'])
+                    ->name('progress.store');
+            });
     });
 });
 

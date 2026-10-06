@@ -45,6 +45,18 @@ class Staff extends Model implements Auditable
             ->withTimestamps();
     }
 
+    public function treatmentPlansLed()
+    {
+        return $this->hasMany(TreatmentPlan::class, 'lead_staff_id');
+    }
+
+    public function treatmentPlanTeams()
+    {
+        return $this->belongsToMany(TreatmentPlan::class, 'treatment_plan_staff')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
     // ─── Accessors ─────────────────────────────────────
 
     public function getFullNameAttribute(): string

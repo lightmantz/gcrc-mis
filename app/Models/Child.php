@@ -98,6 +98,16 @@ class Child extends Model implements Auditable
             ->where('status', 'active');
     }
 
+    public function treatmentPlans()
+    {
+        return $this->hasMany(TreatmentPlan::class)->latest('start_date');
+    }
+
+    public function activeTreatmentPlans()
+    {
+        return $this->treatmentPlans()->active();
+    }
+
     // ─── Accessors ─────────────────────────────────────
 
     public function getFullNameAttribute(): string

@@ -47,6 +47,12 @@ class Diagnosis extends Model implements Auditable
         return $this->belongsTo(Assessment::class);
     }
 
+    public function treatmentPlans()
+    {
+        return $this->belongsToMany(TreatmentPlan::class, 'treatment_plan_diagnosis')
+            ->withTimestamps();
+    }
+
     // ─── Accessors ─────────────────────────────────────
 
     /**

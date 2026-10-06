@@ -91,8 +91,8 @@ return [
             'items' => [
                 ['key' => 'assessments',     'text' => 'Assessments',     'icon' => 'clipboard', 'route' => 'admin.assessments.index'],
                 ['key' => 'diagnoses',       'text' => 'Diagnoses',       'icon' => 'medical',   'route' => 'admin.diagnoses.index'],
+                ['key' => 'treatment-plans', 'text' => 'Treatment Plans', 'icon' => 'heart',     'route' => 'admin.treatment-plans.index'],
                 // Unlock each item as its module is built.
-                // ['key' => 'treatment-plans', 'text' => 'Treatment Plans', 'icon' => 'heart',     'route' => 'admin.treatment-plans.index'],
                 // ['key' => 'therapy-records', 'text' => 'Therapy Records', 'icon' => 'activity',  'route' => 'admin.therapy-records.index'],
                 // ['key' => 'admissions',      'text' => 'Admissions',      'icon' => 'login',     'route' => 'admin.admissions.index'],
                 // ['key' => 'appointments',    'text' => 'Appointments',    'icon' => 'calendar',  'route' => 'admin.appointments.index'],

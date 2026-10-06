@@ -12,6 +12,8 @@ use App\Models\Document;
 use App\Models\EmergencyContact;
 use App\Models\Guardian;
 use App\Models\Staff;
+use App\Models\TreatmentGoal;
+use App\Models\TreatmentPlan;
 use App\Models\User;
 use App\Observers\ChildObserver;
 use App\Observers\StaffObserver;
@@ -23,6 +25,8 @@ use App\Policies\EmergencyContactPolicy;
 use App\Policies\GuardianPolicy;
 use App\Policies\RolePolicy;
 use App\Policies\StaffPolicy;
+use App\Policies\TreatmentGoalPolicy;
+use App\Policies\TreatmentPlanPolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
@@ -51,6 +55,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Document::class, DocumentPolicy::class);
         Gate::policy(Assessment::class, AssessmentPolicy::class);
         Gate::policy(Diagnosis::class, DiagnosisPolicy::class);
+        Gate::policy(TreatmentPlan::class, TreatmentPlanPolicy::class);
+        Gate::policy(TreatmentGoal::class, TreatmentGoalPolicy::class);
 
         // Observers
         Staff::observe(StaffObserver::class);
