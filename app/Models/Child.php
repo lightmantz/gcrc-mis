@@ -90,7 +90,10 @@ class Child extends Model implements Auditable
     {
         return $this->diagnoses()->where('status', 'active');
     }
-
+public function therapyRecords()
+{
+    return $this->hasMany(TherapyRecord::class)->latest('session_date');
+}
     public function primaryDiagnoses()
     {
         return $this->diagnoses()

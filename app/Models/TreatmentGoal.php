@@ -127,7 +127,12 @@ class TreatmentGoal extends Model implements Auditable
     {
         return $query->where('status', 'in_progress');
     }
-
+public function therapyRecords()
+{
+    return $this->belongsToMany(TherapyRecord::class, 'therapy_record_goal')
+        ->withPivot(['note', 'progress_delta'])
+        ->withTimestamps();
+}
     public function scopeAchieved($query)
     {
         return $query->where('status', 'achieved');

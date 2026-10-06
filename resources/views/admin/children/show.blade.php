@@ -6,6 +6,12 @@
 @section('content')
     <x-gentelella::page-header title="{{ $child->full_name }}" pretitle="{{ $child->child_number }}">
         <x-slot:actions>
+            @can('children.view')
+                <button type="button" class="btn btn-outline"
+                        onclick="document.getElementById('print-options').style.display = 'flex';">
+                    Print
+                </button>
+            @endcan
             @can('update', $child)
                 <a href="{{ route('admin.children.edit', $child) }}" class="btn btn-primary">Edit</a>
             @endcan
@@ -147,4 +153,54 @@
             @endcan
         </div>
     </div>
+
+    {{-- Print options modal --}}
+    @can('children.view')
+        <div id="print-options"
+             style="display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.45); backdrop-filter: blur(2px); z-index: 1000; align-items: center; justify-content: center; padding: 20px;"
+             onclick="if(event.target === this) this.style.display = 'none';">
+            <div style="background: var(--bg-surface); border-radius: 8px; box-shadow: 0 20px 48px rgba(15,23,42,0.2); max-width: 480px; width: 100%; padding: 24px;">
+                <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 4px;">Print Options</h3>
+                <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 16px;">
+                    The default printout includes identity, contact, medical summary, active diagnoses,
+                    active treatment plans, guardians, and emergency contacts. Add optional sections below.
+                </p>
+
+                <form id="print-form"
+                      method="GET"
+                      action="{{ route('admin.children.print', $child) }}"
+                      target="_blank"
+                      onsubmit="document.getElementById('print-options').style.display = 'none';">
+
+                    <label class="form-check" style="margin-bottom: 8px;">
+                        <input type="checkbox" name="include_assessments" value="1">
+                        <span>Include assessment history</span>
+                    </label>
+
+                    <label class="form-check" style="margin-bottom: 8px;">
+                        <input type="checkbox" name="include_plans" value="1">
+                        <span>Include past treatment plans</span>
+                    </label>
+
+                    <label class="form-check" style="margin-bottom: 8px;">
+                        <input type="checkbox" name="include_referrals" value="1">
+                        <span>Include referral history</span>
+                    </label>
+
+                    <label class="form-check" style="margin-bottom: 16px;">
+                        <input type="checkbox" name="include_documents" value="1">
+                        <span>Include list of attached documents</span>
+                    </label>
+
+                    <div style="display: flex; gap: 8px; justify-content: flex-end; padding-top: 12px; border-top: 1px solid var(--border-color-light);">
+                        <button type="button" class="btn btn-outline"
+                                onclick="document.getElementById('print-options').style.display = 'none';">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">Open Print View</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endcan
 @endsection

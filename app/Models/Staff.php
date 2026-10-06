@@ -130,7 +130,10 @@ class Staff extends Model implements Auditable
     {
         return $query->where('status', 'active');
     }
-
+public function therapyRecords()
+{
+    return $this->hasMany(TherapyRecord::class, 'therapist_id')->latest('session_date');
+}
     public function scopeInCategory($query, string $category)
     {
         return $query->where('category', $category);

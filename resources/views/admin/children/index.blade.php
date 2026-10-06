@@ -68,6 +68,9 @@
 
                 <div class="form-actions" style="margin: 0; padding: 0; border: none;">
                     <button type="submit" class="btn btn-primary">Filter</button>
+                    <a href="{{ route('admin.children.export', request()->query()) }}" class="btn btn-outline">
+                        Export CSV
+                    </a>
                     <a href="{{ route('admin.children.index') }}" class="btn btn-outline">Reset</a>
                 </div>
             </form>

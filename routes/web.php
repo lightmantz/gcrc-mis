@@ -146,7 +146,19 @@ Route::middleware('auth')->group(function () {
 
         /* ---------------------------------------------------------------
          |  Children
+         |
+         |  `print` and `export` are declared BEFORE the resource so
+         |  that {child} doesn't capture the literal strings "print"
+         |  and "export" as if they were model IDs.
          * --------------------------------------------------------------- */
+        Route::get('children/{child}/print', [ChildController::class, 'printView'])
+            ->name('children.print')
+            ->middleware('permission:children.view');
+
+        Route::get('children/export', [ChildController::class, 'export'])
+            ->name('children.export')
+            ->middleware('permission:children.view');
+
         Route::resource('children', ChildController::class)
             ->middleware([
                 'index'   => 'permission:children.view',

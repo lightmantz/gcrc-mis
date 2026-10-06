@@ -186,6 +186,10 @@ class TreatmentPlan extends Model implements Auditable
     {
         return $query->where('discipline', $discipline);
     }
+    public function therapyRecords()
+{
+    return $this->hasMany(TherapyRecord::class)->latest('session_date');
+}
 
     public function scopeOverdueReview($query)
     {
